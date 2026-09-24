@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -32,6 +32,28 @@ export default function AuthPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [otpSent, setOtpSent] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Auto-redirect if user already has an active session
+  useEffect(() => {
+    async function checkExistingAuth() {
+      try {
+        const res = await authService.getCurrentUser();
+        if (res?.user) {
+          const role = res.profile?.role || res.user.user_metadata?.role || 'patient';
+          if (role === 'practitioner') {
+            navigate('/practitioner-dashboard', { replace: true });
+          } else if (role === 'receptionist') {
+            navigate('/receptionist-dashboard', { replace: true });
+          } else {
+            navigate('/patient-dashboard', { replace: true });
+          }
+        }
+      } catch {
+        // Not authenticated, stay on login page
+      }
+    }
+    checkExistingAuth();
+  }, [navigate]);
 
   // Form states
   const [formData, setFormData] = useState({

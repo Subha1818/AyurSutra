@@ -25,11 +25,12 @@ import {
   CalendarCheck
 } from 'lucide-react';
 import { AIChatbot, TherapySuggestions } from '@/components/AIComponents';
-import { mockResponses, locationService, aiService } from '@/lib/api';
+import { mockResponses, locationService, aiService, authService } from '@/lib/api';
 import { useNavigate } from 'react-router-dom';
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [currentUser, setCurrentUser] = useState<{ name: string; role: string; dashboardPath: string } | null>(null);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
   const [selectedGoals, setSelectedGoals] = useState<string[]>([]);
   const [nearbyClinicss, setNearbyClinics] = useState(mockResponses.clinics);
@@ -76,6 +77,28 @@ export default function LandingPage() {
       }
     };
     loadNearbyClinics();
+  }, []);
+
+  // Check if user is already signed in
+  useEffect(() => {
+    async function loadActiveUser() {
+      try {
+        const res = await authService.getCurrentUser();
+        if (res?.user) {
+          const role = res.profile?.role || res.user.user_metadata?.role || 'patient';
+          const name = res.profile?.name || res.user.user_metadata?.name || 'User';
+          let dashboardPath = '/patient-dashboard';
+          if (role === 'practitioner') dashboardPath = '/practitioner-dashboard';
+          else if (role === 'receptionist') dashboardPath = '/receptionist-dashboard';
+          setCurrentUser({ name, role, dashboardPath });
+        } else {
+          setCurrentUser(null);
+        }
+      } catch {
+        setCurrentUser(null);
+      }
+    }
+    loadActiveUser();
   }, []);
 
   // Slideshow interval (5 seconds)
@@ -195,6 +218,20 @@ export default function LandingPage() {
 
           {/* CTA buttons */}
           <div className="flex items-center gap-2">
+            {currentUser && (
+              <button
+                onClick={() => navigate(currentUser.dashboardPath)}
+                className={`text-sm rounded-full px-5 py-2 font-semibold transition-all duration-200 shadow-sm flex items-center gap-1.5 ${
+                  isScrolled
+                    ? 'bg-amber-500 hover:bg-amber-400 text-white hover:shadow-amber-200/50 hover:shadow-md'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                Dashboard ({currentUser.name.split(' ')[0]}) <ArrowRight className="w-3.5 h-3.5" />
+              </button>
+            )}
+            {!currentUser && (
+              <>
             <button onClick={() => navigate('/auth')} className={`hidden md:inline-flex text-sm font-medium px-3 py-1.5 rounded-full transition-all duration-200 ${
               isScrolled ? 'text-green-200 hover:text-white hover:bg-green-600/50' : 'text-gray-600 hover:text-gray-900 hover:bg-green-50'
             }`}>
@@ -207,6 +244,8 @@ export default function LandingPage() {
             }`}>
               Get Started <ArrowRight className="w-3.5 h-3.5" />
             </button>
+              </>
+            )}
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -253,6 +292,17 @@ export default function LandingPage() {
               Find Clinic
             </a>
             <hr className={isScrolled ? 'border-green-600/50 my-1' : 'border-green-100 my-1'} />
+            {currentUser ? (
+              <button
+                onClick={() => { navigate(currentUser.dashboardPath); setIsMenuOpen(false); }}
+                className={`w-full text-center text-base py-3 rounded-xl font-semibold transition-colors shadow-sm ${
+                  isScrolled ? 'bg-amber-500 hover:bg-amber-400 text-white' : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                Go to My Dashboard ({currentUser.name.split(' ')[0]})
+              </button>
+            ) : (
+              <>
             <button
               onClick={() => { navigate('/auth'); setIsMenuOpen(false); }}
               className={`w-full text-left text-base font-medium px-4 py-2.5 rounded-xl transition-all ${
@@ -269,6 +319,8 @@ export default function LandingPage() {
             >
               Get Started
             </button>
+              </>
+            )}
           </div>
         )}
       </nav>
@@ -324,12 +376,12 @@ export default function LandingPage() {
             <Button 
               size="lg" 
               className="bg-green-600 hover:bg-green-700 text-lg px-8 py-6 rounded-full hover:scale-105 active:scale-95 transition-all"
-              onClick={() => navigate('/auth')}
+              onClick={() => navigate(currentUser ? currentUser.dashboardPath : '/auth')}
             >
               <Calendar className="w-5 h-5 mr-2" />
-              Book Therapy
+              {currentUser ? 'My Dashboard' : 'Book Therapy'}
             </Button>
-            <Button size="lg" variant="outline" onClick={() => navigate('/auth')} className="text-lg px-8 py-6 rounded-full bg-white/10 text-white border-white/30 hover:bg-white/20 hover:text-white hover:scale-105 active:scale-95 transition-all">
+            <Button size="lg" variant="outline" onClick={() => navigate(currentUser ? currentUser.dashboardPath : '/auth')} className="text-lg px-8 py-6 rounded-full bg-white/10 text-white border-white/30 hover:bg-white/20 hover:text-white hover:scale-105 active:scale-95 transition-all">
               <Users className="w-5 h-5 mr-2" />
               Patient Login
             </Button>
