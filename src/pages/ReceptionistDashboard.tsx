@@ -106,7 +106,7 @@ export default function ReceptionistDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-emerald-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -136,7 +136,7 @@ export default function ReceptionistDashboard() {
 
           {/* Register Patient */}
           <TabsContent value="register" className="space-y-6">
-            <Card>
+            <Card className="bg-emerald-100">
               <CardHeader><CardTitle className="flex items-center gap-2"><UserPlus className="w-5 h-5" />Register New Patient</CardTitle></CardHeader>
               <CardContent>
                 <form onSubmit={handlePatientRegistration} className="space-y-4">
@@ -168,7 +168,7 @@ export default function ReceptionistDashboard() {
           <TabsContent value="scheduling" className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               {/* Manual Scheduling */}
-              <Card>
+              <Card className="bg-emerald-100">
                 <CardHeader><CardTitle>Manual Scheduling</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   <Select value={selectedPatient} onValueChange={setSelectedPatient}>
@@ -199,7 +199,7 @@ export default function ReceptionistDashboard() {
             </div>
 
             {/* Today's Appointments */}
-            <Card>
+            <Card className="bg-emerald-100">
               <CardHeader><CardTitle>Today's Appointments</CardTitle></CardHeader>
               <CardContent>
                 {appointments.length === 0 ? <p>No appointments.</p> :
@@ -216,7 +216,7 @@ export default function ReceptionistDashboard() {
 
           {/* Calendar */}
           <TabsContent value="calendar" className="space-y-6">
-            <Card>
+            <Card className="bg-emerald-100">
               <CardHeader><CardTitle>Calendar</CardTitle></CardHeader>
               <CardContent>
                 <Calendar selected={selectedCalendarDate} onSelect={setSelectedCalendarDate} />
@@ -226,7 +226,7 @@ export default function ReceptionistDashboard() {
 
           {/* Requests */}
           <TabsContent value="requests" className="space-y-6">
-            <Card>
+            <Card className="bg-emerald-100">
               <CardHeader><CardTitle className="flex items-center gap-2"><AlertCircle className="w-5 h-5"/>Pending Requests</CardTitle></CardHeader>
               <CardContent>
                 {requests.map(r => (
@@ -248,7 +248,7 @@ export default function ReceptionistDashboard() {
 
           {/* Settings */}
           <TabsContent value="settings" className="space-y-6">
-            <Card>
+            <Card className="bg-emerald-100">
               <CardHeader><CardTitle className="flex items-center gap-2"><TrendingUp className="w-5 h-5"/>Clinic Statistics</CardTitle></CardHeader>
               <CardContent>
                 <div className="grid md:grid-cols-4 gap-6">

@@ -46,17 +46,17 @@ export default function PractitionerDashboard() {
 
   // Mock data
   const todaySessions = [
-    { id: 1, time: '09:00', patient: 'Sarah Johnson', therapy: 'Vamana', status: 'scheduled' },
-    { id: 2, time: '10:30', patient: 'Michael Chen', therapy: 'Basti', status: 'in-progress' },
+    { id: 1, time: '09:00', patient: 'Souvik Satpati', therapy: 'Vamana', status: 'scheduled' },
+    { id: 2, time: '10:30', patient: 'Abhisekh Das', therapy: 'Basti', status: 'in-progress' },
     { id: 3, time: '14:00', patient: 'Priya Sharma', therapy: 'Nasya', status: 'scheduled' },
-    { id: 4, time: '15:30', patient: 'David Wilson', therapy: 'Virechana', status: 'scheduled' },
+    { id: 4, time: '15:30', patient: 'Anant Agarwal', therapy: 'Virechana', status: 'scheduled' },
   ];
 
   const patients = [
-    { id: 1, name: 'Sarah Johnson', therapy: 'Vamana', sessions: 7, progress: 85 },
-    { id: 2, name: 'Michael Chen', therapy: 'Basti', sessions: 5, progress: 62 },
+    { id: 1, name: 'Souvik Satpati', therapy: 'Vamana', sessions: 7, progress: 85 },
+    { id: 2, name: 'Abhisekh Das', therapy: 'Basti', sessions: 5, progress: 62 },
     { id: 3, name: 'Priya Sharma', therapy: 'Nasya', sessions: 3, progress: 45 },
-    { id: 4, name: 'David Wilson', therapy: 'Virechana', sessions: 8, progress: 90 },
+    { id: 4, name: 'Anant Agarwal', therapy: 'Virechana', sessions: 8, progress: 90 },
   ];
 
   useEffect(() => {
@@ -105,7 +105,7 @@ export default function PractitionerDashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-emerald-50">
       {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
