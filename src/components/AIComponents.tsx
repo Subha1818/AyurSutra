@@ -227,15 +227,24 @@ export const TherapySuggestions: React.FC<{
   );
 };
 
-// Smart Scheduler Component
 export const SmartScheduler: React.FC<{
+  availableSlots?: string[];
   onScheduleSelect?: (schedule: ScheduleRecommendation) => void;
-}> = ({ onScheduleSelect }) => {
-  const [recommendations] = useState<ScheduleRecommendation[]>([
-    { time: '10:00 AM', reason: 'Optimal time for Vata balance', confidence: 95 },
-    { time: '2:00 PM', reason: 'Good for Pitta therapies', confidence: 87 },
-    { time: '4:00 PM', reason: 'Alternative slot available', confidence: 72 },
-  ]);
+}> = ({ availableSlots, onScheduleSelect }) => {
+  const recommendations: ScheduleRecommendation[] = React.useMemo(() => {
+    if (availableSlots && availableSlots.length > 0) {
+      return availableSlots.slice(0, 3).map((slot, idx) => ({
+        time: slot,
+        reason: idx === 0 ? 'Optimal time for Vata balance & clinic throughput' : idx === 1 ? 'Ideal alignment for Pitta therapies' : 'Recommended opening for calm recuperation',
+        confidence: idx === 0 ? 96 : idx === 1 ? 88 : 75
+      }));
+    }
+    return [
+      { time: '10:00 AM', reason: 'Optimal time for Vata balance', confidence: 95 },
+      { time: '2:00 PM', reason: 'Good for Pitta therapies', confidence: 87 },
+      { time: '4:00 PM', reason: 'Alternative slot available', confidence: 72 },
+    ];
+  }, [availableSlots]);
 
   return (
     <Card className="w-full">

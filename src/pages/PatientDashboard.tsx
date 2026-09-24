@@ -28,7 +28,8 @@ import {
   AlertCircle,
   X,
   RefreshCw,
-  Activity
+  Activity,
+  Leaf
 } from 'lucide-react';
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AIChatbot, TherapySuggestions } from '@/components/AIComponents';
@@ -463,29 +464,40 @@ export default function PatientDashboard() {
   return (
     <div className="min-h-screen bg-emerald-50 text-gray-900">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b sticky top-0 z-40">
+      <header className="bg-white/95 backdrop-blur-sm shadow-sm border-b sticky top-0 z-40">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">🌿</span>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight">AyurSutra</h1>
+            <div className="flex items-center gap-4">
+              <div
+                onClick={() => navigate('/')}
+                className="flex items-center gap-2.5 cursor-pointer group"
+                title="Go to AyurSutra Home"
+              >
+                <div className="w-10 h-10 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow-sm group-hover:bg-emerald-700 transition-colors">
+                  <Leaf className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-900 leading-tight group-hover:text-emerald-700 transition-colors">
+                    AyurSutra
+                  </h1>
+                  <p className="text-[11px] text-emerald-700 font-semibold tracking-wide uppercase">Patient Portal</p>
+                </div>
               </div>
               <Badge variant="secondary" className="hidden sm:inline-flex bg-emerald-100 text-emerald-800 border-emerald-200">
-                Welcome back, {currentUser?.name || 'Patient'}!
+                Welcome, {currentUser?.name || 'Patient'}
               </Badge>
             </div>
             <div className="flex items-center gap-2">
               <Button 
                 variant="ghost" 
                 size="sm" 
-                className="relative" 
+                className="relative text-gray-700 hover:text-emerald-700 hover:bg-emerald-50" 
                 onClick={() => setActiveTab('overview')}
                 title="Notifications"
               >
-                <Bell className="w-5 h-5 text-gray-700" />
+                <Bell className="w-5 h-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center">
+                  <span className="absolute top-1 right-1 bg-red-500 text-white text-[10px] font-bold rounded-full h-4 w-4 flex items-center justify-center ring-2 ring-white animate-pulse">
                     {unreadCount}
                   </span>
                 )}
@@ -495,18 +507,19 @@ export default function PatientDashboard() {
                 size="sm" 
                 onClick={() => currentUser && loadUserData(currentUser.id)}
                 title="Refresh Data"
+                className="text-gray-700 hover:text-emerald-700 hover:bg-emerald-50"
               >
-                <RefreshCw className="w-4 h-4 text-gray-700" />
+                <RefreshCw className="w-4 h-4" />
               </Button>
               <Button 
-                variant="ghost" 
+                variant="outline" 
                 size="sm" 
                 onClick={handleSignOut}
                 title="Sign Out"
-                className="text-gray-600 hover:text-red-600"
+                className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
               >
-                <LogOut className="w-4 h-4 mr-1" />
-                <span className="hidden sm:inline text-xs">Logout</span>
+                <LogOut className="w-4 h-4 sm:mr-1.5" />
+                <span className="hidden sm:inline text-xs">Sign Out</span>
               </Button>
             </div>
           </div>
