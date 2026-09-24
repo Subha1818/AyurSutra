@@ -27,7 +27,8 @@ import {
   CheckCircle2,
   AlertCircle,
   X,
-  RefreshCw
+  RefreshCw,
+  Activity
 } from 'lucide-react';
 import { Line, LineChart, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { AIChatbot, TherapySuggestions } from '@/components/AIComponents';

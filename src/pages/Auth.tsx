@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { authService } from '@/lib/api';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 
 export default function AuthPage() {
   const navigate = useNavigate();
@@ -143,21 +144,34 @@ export default function AuthPage() {
           }
         }
       } else {
-        // Registration
-        if (otpSent && formData.otp) {
-          await authService.verifyOTP(formData.email, formData.otp);
-        }
-
+        // Direct Registration (instant signup, email confirmation disabled)
         const result = await authService.register({
           ...formData,
           role: selectedRole
         });
 
         if (result.success) {
-          // Show success message and switch to login
+          toast.success('Account created successfully! Logging you in...');
+          try {
+            const loginRes = await authService.login({
+              email: formData.email,
+              password: formData.password,
+              role: selectedRole
+            });
+            if (loginRes.success) {
+              const effectiveRole = loginRes.user?.role || selectedRole;
+              if (effectiveRole === 'practitioner') navigate('/practitioner-dashboard');
+              else if (effectiveRole === 'receptionist') navigate('/receptionist-dashboard');
+              else navigate('/patient-dashboard');
+              return;
+            }
+          } catch {
+            // Fallback to login tab
+          }
           setAuthMode('login');
-          setFormData({ ...formData, password: '', confirmPassword: '', otp: '' });
-          setOtpSent(false);
+          setFormData(prev => ({ ...prev, password: '', confirmPassword: '', otp: '' }));
+          setErrors({});
+          toast.success('Registration complete! Please sign in with your credentials.');
         }
       }
     } catch (error: any) {
@@ -356,64 +370,19 @@ export default function AuthPage() {
                 {/* Email */}
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  {authMode === 'register' ? (
-                    <div className="flex gap-2">
-                      <div className="relative flex-1">
-                        <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                        <Input
-                          id="email"
-                          type="email"
-                          placeholder="Enter your email"
-                          className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
-                          value={formData.email}
-                          onChange={(e) => handleInputChange('email', e.target.value)}
-                        />
-                      </div>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        onClick={sendOTP}
-                        disabled={isLoading || !formData.email}
-                      >
-                        {otpSent ? 'Resend' : 'Send OTP'}
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-                      <Input
-                        id="email"
-                        type="email"
-                        placeholder="Enter your email"
-                        className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
-                        value={formData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                      />
-                    </div>
-                  )}
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="Enter your email"
+                      className={`pl-10 ${errors.email ? 'border-red-500' : ''}`}
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                    />
+                  </div>
                   {errors.email && <p className="text-sm text-red-500">{errors.email}</p>}
                 </div>
-
-                {/* Email OTP (Register only, after OTP sent) */}
-                {authMode === 'register' && otpSent && (
-                  <div className="space-y-2">
-                    <Label htmlFor="otp">Email OTP Verification</Label>
-                    <Input
-                      id="otp"
-                      type="text"
-                      placeholder="Enter 6-digit OTP from email"
-                      maxLength={6}
-                      value={formData.otp}
-                      onChange={(e) => handleInputChange('otp', e.target.value)}
-                      className={errors.otp ? 'border-red-500' : ''}
-                    />
-                    {errors.otp && <p className="text-sm text-red-500">{errors.otp}</p>}
-                    <p className="text-sm text-green-600 flex items-center gap-1">
-                      <CheckCircle className="w-4 h-4" />
-                      OTP sent to {formData.email}
-                    </p>
-                  </div>
-                )}
 
                 {/* Phone (Register only) */}
                 {authMode === 'register' && (
